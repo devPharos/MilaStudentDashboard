@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from 'react';
 import { getAuth, RecaptchaVerifier } from 'firebase/auth';
 import firebase from '../lib/firebase';
+import { useRouter } from 'next/router'
 
 type User = {
     id: number;
@@ -28,6 +29,7 @@ export function AuthProvider({ children }:any) {
    const [loading, setLoading] = useState(true);
    const isAuthenticated = !!user;
    const auth = getAuth();
+   const router = useRouter()
  
    useEffect(() => {
  
@@ -58,6 +60,7 @@ export function AuthProvider({ children }:any) {
         
     } finally {
         setLoading(false);
+        router.push('/dashboard')
     }
 
    }

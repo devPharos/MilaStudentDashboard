@@ -3,16 +3,17 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import Link from 'next/link'
-import { useEffect } from 'react';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import AuthContexts from '../contexts/AuthContexts';
-import { getAuth, RecaptchaVerifier } from 'firebase/auth';
-import firebase from '../lib/firebase';
 
-declare const window: any;
 
 const Home: NextPage = () => {
   const { signIn } = useContext(AuthContexts);
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
+
+  useEffect(() => {
+    console.log({phoneNumber})
+  },[phoneNumber])
   
   return (
     <div className={styles.container}>
@@ -23,9 +24,11 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title} onClick={() => signIn({phoneNumber: "+55 11 993284334"})}>
+        <h1 className={styles.title} onClick={() => signIn({ phoneNumber })}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
+
+        <input type="text" onChange={(e) => setPhoneNumber(e.target.value)} />
 
         <div id="recaptcha-container"></div>
 

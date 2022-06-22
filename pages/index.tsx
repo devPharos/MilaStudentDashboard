@@ -3,8 +3,17 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import Link from 'next/link'
+import { useEffect } from 'react';
+import { useContext } from 'react';
+import AuthContexts from '../contexts/AuthContexts';
+import { getAuth, RecaptchaVerifier } from 'firebase/auth';
+import firebase from '../lib/firebase';
+
+declare const window: any;
 
 const Home: NextPage = () => {
+  const { signIn } = useContext(AuthContexts);
+  
   return (
     <div className={styles.container}>
       <Head>
@@ -14,9 +23,11 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
+        <h1 className={styles.title} onClick={() => signIn({phoneNumber: "+55 11 993284334"})}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
+
+        <div id="recaptcha-container"></div>
 
         <p className={styles.description}>
           Get started by editing{' '}

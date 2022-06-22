@@ -11,11 +11,16 @@ type SignInData = {
     phoneNumber: string
 }
 
+type CodeData = {
+    codeNumber: string
+}
+
 type AppContextInterface = {
     isAuthenticated: boolean;
     user: object | null;
     loading: boolean;
     signIn: (data: SignInData) => Promise<void>;
+    confirm: (data: CodeData) => Promise<void>;
     // signOut: (data: SignOutData) => Promise<void>;
 }
 
@@ -42,6 +47,10 @@ export function AuthProvider({ children }:any) {
  
    },[])
 
+   useEffect(() => {
+    console.log(user)
+   },[user])
+
   
    async function signIn({ phoneNumber }: SignInData) {
     try {
@@ -55,15 +64,43 @@ export function AuthProvider({ children }:any) {
         .auth()
         .signInWithPhoneNumber(phoneNumber, appVerifier)
         .then((response) => {
+            window.confirmationResult = response;
             console.log(response);
-        })
+            // router.push('/dashboard')
+        }).catch((error) => {
+            // Error; SMS not sent
+            // ...
+            console.log(error)
+          });
         
     } finally {
         setLoading(false);
-        router.push('/dashboard')
     }
 
    }
+
+   async function confirm({ codeNumber }: CodeData) {
+        try {
+            setLoading(true);
+            window.confirmationResult.confirm(codeNumber).then((result: any) => {
+                // User signed in successfully.
+                setUser(result.user);
+                console.log(result);
+                var credential = firebase.auth.PhoneAuthProvider.credential(window.confirmationResult.verificationId, codeNumber);
+                console.log(credential);
+                firebase.auth().signInWithCredential(credential);
+                console.log('sucesso!')
+
+                // ...
+            }).catch((error: any) => {
+                // User couldn't sign in (bad verification code?)
+                // ...
+            console.log(error)
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
 
 //    async function signOut() {
 //     try {
@@ -81,7 +118,7 @@ export function AuthProvider({ children }:any) {
 //    }
 
    return (
-    <AuthContext.Provider value={{ isAuthenticated, user, loading, signIn }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, loading, signIn, confirm }}>
         { children }
     </AuthContext.Provider>
    );

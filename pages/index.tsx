@@ -8,12 +8,17 @@ import AuthContexts from '../contexts/AuthContexts';
 
 
 const Home: NextPage = () => {
-  const { signIn } = useContext(AuthContexts);
+  const { signIn, confirm } = useContext(AuthContexts);
   const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [codeNumber, setCodeNumber] = useState<string>('');
 
   useEffect(() => {
     console.log({phoneNumber})
   },[phoneNumber])
+
+  useEffect(() => {
+    console.log({codeNumber})
+  },[codeNumber])
   
   return (
     <div className={styles.container}>
@@ -24,11 +29,14 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title} onClick={() => signIn({ phoneNumber })}>
+        <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
 
-        <input type="text" onChange={(e) => setPhoneNumber(e.target.value)} />
+        <input type="text" placeholder="Celular" onChange={(e) => setPhoneNumber(e.target.value)} />
+        <button type="button" onClick={() => signIn({ phoneNumber })}>Enviar SMS</button>
+        <input type="text" placeholder="Código" onChange={(e) => setCodeNumber(e.target.value)} />
+        <button type="button" onClick={() => confirm({ codeNumber })}>Login</button>
 
         <div id="recaptcha-container"></div>
 
